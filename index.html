@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OGame Flight Time V9.0</title>
+    <link rel="stylesheet" href="../style.css"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="background-overlay"></div>
+
+<div class="container">
+    
+    <div class="header-section">
+        <a href="../index.html" class="home-btn" title="Torna alla Home"><i class="fas fa-home"></i></a>
+        <div class="logo-area">
+            <h1 class="main-title">OGAME <span class="highlight">FLIGHT</span> TIME <span class="v-tag">V9.0</span></h1>
+        </div>
+        <div class="lang-bar" id="lang-selector"></div>
+    </div>
+
+    <div class="glass-panel api-panel">
+        <div class="api-controls">
+            <div class="input-box">
+                <label data-i18n="lbl_community">Community</label>
+                <select id="api-lang" class="input-cyber">
+                    <option value="it" selected>IT - Italy</option>
+                    <option value="en">EN - Global</option>
+                    <option value="de">DE - Germany</option>
+                    <option value="fr">FR - France</option>
+                    <option value="es">ES - Spain</option>
+                    <option value="pl">PL - Poland</option>
+                    <option value="tr">TR - Turkey</option>
+                    <option value="pt">PT - Portugal</option>
+                    <option value="nl">NL - Netherlands</option>
+                    <option value="ru">RU - Russia</option>
+                    <option value="us">US - USA</option>
+                    <option value="cz">CZ - Czech</option>
+                    <option value="hr">HR - Croatia</option>
+                    <option value="hu">HU - Hungary</option>
+                    <option value="ro">RO - Romania</option>
+                    <option value="sk">SK - Slovakia</option>
+                    <option value="br">BR - Brazil</option>
+                    <option value="jp">JP - Japan</option>
+                </select>
+            </div>
+            <div class="input-box big-box">
+                <label data-i18n="select_uni">Universo</label>
+                <select id="api-uni" class="input-cyber">
+                    <option value="" disabled selected>---</option>
+                </select>
+            </div>
+            <button id="btn-fetch" class="btn-main small-btn" data-i18n="btn_load">CARICA</button>
+        </div>
+        
+        <div class="speed-indicators">
+            <div class="speed-box war"><span>WAR</span><input type="number" id="speed-war" value="1" class="input-speed" readonly></div>
+            <div class="speed-box peace"><span>PEACE</span><input type="number" id="speed-peace" value="1" class="input-speed" readonly></div>
+            <div class="speed-box hold"><span>HOLD</span><input type="number" id="speed-hold" value="1" class="input-speed" readonly></div>
+        </div>
+    </div>
+
+    <div class="glass-panel spy-panel">
+        <div class="panel-head">
+            <h3><i class="fas fa-satellite-dish"></i> <span data-i18n="paste_report">Report Spionaggio</span></h3>
+            <div class="panel-actions">
+                <button id="btn-reset" class="btn-reset-small">RESET</button>
+                <button id="btn-analyze-spy" class="btn-cyber small" data-i18n="analyze">ANALIZZA</button>
+            </div>
+        </div>
+        <textarea id="spy-input" class="input-cyber area-cyber" placeholder="..."></textarea>
+    </div>
+
+    <div class="main-layout">
+        
+        <div class="left-col">
+            <div class="glass-panel fleet-panel">
+                <div class="panel-head compact-head">
+                    <h3><i class="fas fa-fighter-jet"></i> <span data-i18n="active_fleet">FLOTTA ATTIVA</span></h3>
+                    <span id="ship-count" class="badge">0</span>
+                </div>
+                <div id="fleet-list" class="fleet-list compact-list"></div>
+            </div>
+        </div>
+
+        <div class="right-col">
+            
+            <div class="config-wrapper">
+                
+                <div class="glass-panel config-box">
+                    <h3><i class="fas fa-sliders-h"></i> <span data-i18n="config_title">Configurazione</span></h3>
+                    <div class="config-grid">
+                        
+                        <div class="config-group span-2">
+                            <label data-i18n="start_coords">PARTENZA</label>
+                            <div class="coords-row">
+                                <input type="number" id="start-g" value="1" class="input-cyber no-spin">
+                                <input type="number" id="start-s" value="1" class="input-cyber no-spin">
+                                <input type="number" id="start-p" value="1" class="input-cyber no-spin">
+                            </div>
+                        </div>
+                        <div class="config-group span-2">
+                            <label class="text-accent" data-i18n="dest">DESTINAZIONE</label>
+                            <div class="coords-row dest">
+                                <input type="number" id="end-g" value="1" class="input-cyber no-spin">
+                                <input type="number" id="end-s" value="2" class="input-cyber no-spin">
+                                <input type="number" id="end-p" value="1" class="input-cyber no-spin">
+                            </div>
+                        </div>
+
+                        <div class="config-group span-2">
+                            <label data-i18n="departure_time">ORARIO DI PARTENZA</label>
+                            <input type="datetime-local" id="flight-time" class="input-cyber mb-2">
+                        </div>
+                        <div class="config-group span-2">
+                            <label data-i18n="mission">MISSIONE</label>
+                            <select id="mission-type" class="input-cyber"></select>
+                        </div>
+
+                        <div class="config-group span-4">
+                            <label data-i18n="techs_title">TECNOLOGIE</label>
+                            <div class="tech-grid vertical">
+                                <div class="tech-item">
+                                    <i class="fas fa-fire"></i> 
+                                    <span class="tech-label" data-i18n="tech_combustion">Combustione</span>
+                                    <input type="number" id="tech-combustion" value="0" class="input-tech-level">
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fas fa-bolt"></i> 
+                                    <span class="tech-label" data-i18n="tech_impulse">Impulso</span>
+                                    <input type="number" id="tech-impulse" value="0" class="input-tech-level">
+                                </div>
+                                <div class="tech-item">
+                                    <i class="fas fa-atom"></i> 
+                                    <span class="tech-label" data-i18n="tech_hyperspace">Iperspaziale</span>
+                                    <input type="number" id="tech-hyperspace" value="0" class="input-tech-level">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-group span-4">
+                            <label data-i18n="player_class_label">CLASSE PLAYER</label>
+                            <div class="class-input-row">
+                                <select id="player-class" class="input-cyber">
+                                    <option value="general" data-i18n="general">General</option>
+                                    <option value="collector" data-i18n="collector">Collector</option>
+                                    <option value="discoverer" data-i18n="discoverer">Discoverer</option>
+                                    <option value="none" data-i18n="no_class">None</option>
+                                </select>
+                                <div class="lf-class-bonus-box" title="Bonus Lifeform per la Classe (es. +10%)">
+                                    <label>LF CLASS %</label>
+                                    <input type="number" id="lf-class-bonus" class="input-cyber" placeholder="0" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-group span-4">
+                            <label data-i18n="alliance_class_label">CLASSE ALLEANZA</label>
+                            <select id="alliance-class" class="input-cyber">
+                                <option value="none" data-i18n="no_class">Nessuna</option>
+                                <option value="warrior">Warrior</option>
+                                <option value="trader">Trader</option>
+                                <option value="researcher">Researcher</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel lf-box">
+                    <div class="panel-head compact-head">
+                        <h3><i class="fas fa-dna"></i> LF BONUS</h3>
+                    </div>
+                    <div id="lf-bonuses-grid" class="lf-list"></div>
+                </div>
+
+            </div> <div id="content-flight" class="tab-content active">
+                <div class="glass-panel results-panel">
+                    <div id="flight-empty" class="empty-state">
+                        <i class="fas fa-space-shuttle fa-2x"></i>
+                        <span data-i18n="err_no_ships">...</span>
+                    </div>
+                    <div id="flight-table-container" class="table-responsive hidden">
+                        <table class="flight-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">%</th>
+                                    <th data-i18n="duration">Durata</th>
+                                    <th data-i18n="fuel">Carburante</th>
+                                    <th data-i18n="arrival">Arrivo</th>
+                                    <th class="return-col" data-i18n="return">Ritorno</th>
+                                    <th class="text-center" data-i18n="act">Calcolo Richiamo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="flight-results"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="deut-save-factor" value="1">
+<script src="script.js"></script>
+</body>
+</html>
